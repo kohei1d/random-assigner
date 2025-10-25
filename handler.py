@@ -62,6 +62,5 @@ def lambda_handler(event, context):
     return _resp(200, {
         "winner": winner,
         "candidates": names,
-        "count": len(names)
     })
 
