@@ -3,6 +3,13 @@
 A random assignment API built with AWS Lambda + Serverless Framework v4.  
 Local development, testing, and deployment all work seamlessly within a Docker environment.
 
+## Demo
+
+<video src="public/random-assigner-demo.mov" controls width="100%" style="max-width: 800px;">
+  Your browser does not support the video tag.
+  <a href="public/random-assigner-demo.mov">Download demo video</a>
+</video>
+
 ## Features
 
 Provides an API that randomly selects one person from a list of candidates.
