@@ -3,6 +3,13 @@
 A random assignment API built with AWS Lambda + Serverless Framework v4.  
 Local development, testing, and deployment all work seamlessly within a Docker environment.
 
+## Demo
+
+
+https://github.com/user-attachments/assets/f98e6300-3a75-4962-a3de-41586c0bbc7f
+
+
+
 ## Features
 
 Provides an API that randomly selects one person from a list of candidates.
@@ -294,44 +301,3 @@ If another process is using port 3000, change the `httpPort` in `serverless.yml`
 - **Never** commit the `.env` file to Git
 - It is recommended to add proper authentication and authorization mechanisms for production environments
 - Lambda Function URL is a public URL, so do not include sensitive information
-
----
-
-## 🛡️ AWS Free Tier Protection
-
-このプロジェクトには、AWS Lambda の無料枠を超えないようにする保護機能が組み込まれています。
-
-### 設定済みの保護機能
-
-- **同時実行数制限**: 5リクエストまで（`serverless.yml` に設定済み）
-- これにより、大量のリクエストが来ても制限を超えることはありません
-
-### 使用状況の確認
-
-```bash
-# 今月の使用状況を確認
-./check-usage.sh
-```
-
-### 緊急停止
-
-無料枠を超えそうな場合、即座にLambdaを停止できます：
-
-```bash
-# Lambda を停止
-./emergency-stop.sh
-
-# Lambda を再開
-./emergency-resume.sh
-```
-
-### 詳細な設定ガイド
-
-詳しくは [FREE_TIER_PROTECTION.md](FREE_TIER_PROTECTION.md) をご覧ください。
-
----
-
-## License
-
-MIT
-
