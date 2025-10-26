@@ -1,0 +1,24 @@
+{
+  "name": "random-assign-python-lambda",
+  "version": "1.0.0",
+  "description": "AWS Lambda + Serverless Framework v4 - Random Assignment API",
+  "scripts": {
+    "setup": "npm install",
+    "local": "npx serverless offline",
+    "invoke-local": "npx serverless invoke local -f randomAssign --data '{\"queryStringParameters\":{\"list\":\"山田,大田,伊藤\"}}'",
+    "test": "./test-local.sh",
+    "deploy": "npx serverless deploy --config serverless.deploy.yml",
+    "remove": "npx serverless remove --config serverless.deploy.yml",
+    "info": "npx serverless info --config serverless.deploy.yml",
+    "logs": "npx serverless logs -f randomAssign --config serverless.deploy.yml"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "serverless": "^4.0.0",
+    "serverless-offline": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

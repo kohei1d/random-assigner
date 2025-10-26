@@ -1,0 +1,15 @@
+# this file is used to deploy the lambda function to aws
+service: random-assigner
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: ap-northeast-1
+  memorySize: 128
+  timeout: 10
+  architecture: x86_64
+  
+functions:
+  randomAssign:
+    handler: handler.lambda_handler
+    url: true
