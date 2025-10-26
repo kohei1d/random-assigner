@@ -6,10 +6,10 @@
     "setup": "npm install",
     "local": "npx serverless offline",
     "invoke-local": "npx serverless invoke local -f randomAssign --data '{\"queryStringParameters\":{\"list\":\"山田,大田,伊藤\"}}'",
-    "deploy": "npx serverless deploy",
-    "remove": "npx serverless remove",
-    "info": "npx serverless info",
-    "logs": "npx serverless logs -f randomAssign"
+    "deploy": "npx serverless deploy --config serverless.deploy.yml",
+    "remove": "npx serverless remove --config serverless.deploy.yml",
+    "info": "npx serverless info --config serverless.deploy.yml",
+    "logs": "npx serverless logs -f randomAssign --config serverless.deploy.yml"
   },
   "dependencies": {},
   "devDependencies": {

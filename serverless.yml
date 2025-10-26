@@ -1,4 +1,5 @@
-service: random-assign-api
+# this file is used to run the lambda function locally
+service: random-assigner
 
 provider:
   name: aws
@@ -12,6 +13,7 @@ functions:
   randomAssign:
     handler: handler.lambda_handler
     url: true
+    # events section is used to define the events that will trigger the lambda function
     events:
       - httpApi:
           path: /
@@ -25,4 +27,3 @@ custom:
     httpPort: 3000
     lambdaPort: 3003
     host: 0.0.0.0
-

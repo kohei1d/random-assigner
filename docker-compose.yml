@@ -17,6 +17,4 @@ services:
       - AWS_REGION=${AWS_REGION:-ap-northeast-1}
     env_file:
       - .env
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["tail -f /dev/null"]
-
+    entrypoint: [] # override the entrypoint to empty array to prevent the default entrypoint of the lambda image
