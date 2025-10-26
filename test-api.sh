@@ -1,8 +1,13 @@
 #!/bin/bash
 
-# Set UTF-8 locale
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+# Set UTF-8 locale (try en_US.UTF-8, fallback to C.UTF-8)
+if locale -a 2>/dev/null | grep -q "en_US.utf8\|en_US.UTF-8"; then
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+else
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+fi
 
 # Get API base URL from argument (default: localhost)
 BASE_URL="${1:-http://localhost:3000}"
