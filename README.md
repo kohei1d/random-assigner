@@ -5,9 +5,7 @@ Local development, testing, and deployment all work seamlessly within a Docker e
 
 ## Demo
 
-
-https://github.com/user-attachments/assets/f98e6300-3a75-4962-a3de-41586c0bbc7f
-
+https://github.com/user-attachments/assets/ce13ab2c-cd8f-4b55-9435-a67a2a173a5d
 
 
 ## Features
