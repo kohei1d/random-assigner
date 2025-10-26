@@ -6,6 +6,7 @@
     "setup": "npm install",
     "local": "npx serverless offline",
     "invoke-local": "npx serverless invoke local -f randomAssign --data '{\"queryStringParameters\":{\"list\":\"山田,大田,伊藤\"}}'",
+    "test": "./test-local.sh",
     "deploy": "npx serverless deploy --config serverless.deploy.yml",
     "remove": "npx serverless remove --config serverless.deploy.yml",
     "info": "npx serverless info --config serverless.deploy.yml",
