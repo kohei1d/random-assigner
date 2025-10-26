@@ -1,11 +1,13 @@
 import json
 import random
+import os
+from string import Template
 
 
 def _parse_names(event):
     """
-    イベントから名前リストを抽出する
-    クエリパラメータまたはリクエストボディから取得
+    Extract names list from event
+    Get from query parameters or request body
     """
     params = event.get("queryStringParameters") or {}
     list_param = params.get("list")
@@ -34,7 +36,7 @@ def _parse_names(event):
 
 def _resp(status, obj):
     """
-    Lambda レスポンスを生成する
+    Generate Lambda response (JSON format)
     """
     return {
         "statusCode": status,
@@ -46,21 +48,38 @@ def _resp(status, obj):
     }
 
 
+def _resp_html(status, winner):
+    """
+    Generate Lambda response (HTML format)
+    """
+    template_path = os.path.join(os.path.dirname(__file__), "templates", "winner.html")
+    with open(template_path, "r", encoding="utf-8") as f:
+        template = Template(f.read())
+    
+    html_content = template.substitute(winner=winner)
+    
+    return {
+        "statusCode": status,
+        "headers": {
+            "Content-Type": "text/html; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": html_content,
+    }
+
+
 def lambda_handler(event, context):
     """
-    Lambda のメインハンドラー
-    ランダムに1つの候補を選択して返す
+    Lambda's main handler (entrypoint)
     """
+
     names = _parse_names(event)
     if not names:
         return _resp(400, {
             "error": "BadRequest",
-            "message": "list パラメータに候補を指定してください。例: ?list=山田,大田,伊藤"
+            "message": "Please specify candidates in the list parameter. Example: ?list=Alice,Bob,Carol"
         })
 
     winner = random.choice(names)
-    return _resp(200, {
-        "winner": winner,
-        "candidates": names,
-    })
+    return _resp_html(200, winner)
 

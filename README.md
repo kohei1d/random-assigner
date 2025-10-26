@@ -68,7 +68,7 @@ When no candidates are specified:
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 Steps to get up and running quickly:
 
@@ -90,7 +90,7 @@ curl "http://localhost:3000/?list=Alice,Bob,Carol"
 
 ---
 
-## 📦 Setup
+## Setup
 
 ### 1. Environment Variables Configuration
 
@@ -175,7 +175,7 @@ docker compose run --rm app npm run invoke-local
 
 ---
 
-## 🌐 Deploy to AWS
+## Deploy to AWS
 
 ### 1. Execute Deployment
 
@@ -227,7 +227,7 @@ docker compose run --rm app npm run remove
 
 ---
 
-## 📋 Available Commands
+## Available Commands
 
 | Command | Description |
 |---------|------|
@@ -242,7 +242,7 @@ docker compose run --rm app npm run remove
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### License Key Error
 
@@ -270,7 +270,7 @@ If another process is using port 3000, change the `httpPort` in `serverless.yml`
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 .
@@ -289,7 +289,7 @@ If another process is using port 3000, change the `httpPort` in `serverless.yml`
 
 ---
 
-## 🔒 Security Notes
+## Security Notes
 
 - **Never** commit the `.env` file to Git
 - It is recommended to add proper authentication and authorization mechanisms for production environments
@@ -297,7 +297,41 @@ If another process is using port 3000, change the `httpPort` in `serverless.yml`
 
 ---
 
-## 📝 License
+## 🛡️ AWS Free Tier Protection
+
+このプロジェクトには、AWS Lambda の無料枠を超えないようにする保護機能が組み込まれています。
+
+### 設定済みの保護機能
+
+- **同時実行数制限**: 5リクエストまで（`serverless.yml` に設定済み）
+- これにより、大量のリクエストが来ても制限を超えることはありません
+
+### 使用状況の確認
+
+```bash
+# 今月の使用状況を確認
+./check-usage.sh
+```
+
+### 緊急停止
+
+無料枠を超えそうな場合、即座にLambdaを停止できます：
+
+```bash
+# Lambda を停止
+./emergency-stop.sh
+
+# Lambda を再開
+./emergency-resume.sh
+```
+
+### 詳細な設定ガイド
+
+詳しくは [FREE_TIER_PROTECTION.md](FREE_TIER_PROTECTION.md) をご覧ください。
+
+---
+
+## License
 
 MIT
 
