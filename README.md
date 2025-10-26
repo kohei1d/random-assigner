@@ -1,325 +1,303 @@
-# 🎲 Random Assignment API
+# Random Assignner
 
-AWS Lambda + Serverless Framework v4 で構築したランダム割り当て API です。  
-Docker 環境でローカル開発・テスト・デプロイが完結します。
+A random assignment API built with AWS Lambda + Serverless Framework v4.  
+Local development, testing, and deployment all work seamlessly within a Docker environment.
 
-## 🎯 機能
+## Features
 
-候補者リストからランダムに1人を選出する API を提供します。
+Provides an API that randomly selects one person from a list of candidates.
 
-### リクエスト方法
+### Request Methods
 
-#### 1. GET リクエスト（クエリパラメータ）
+#### 1. GET Request (Query Parameters)
 ```bash
-GET /?list=山田,大田,伊藤
+GET /?list=Alice,Bob,Carol
 ```
 
-#### 2. POST リクエスト（JSON ボディ）
-```bash
-POST /
-Content-Type: application/json
-
-{
-  "list": ["山田", "大田", "伊藤"]
-}
-```
-
-または
-
+#### 2. POST Request (JSON Body)
 ```bash
 POST /
 Content-Type: application/json
 
 {
-  "list": "山田,大田,伊藤"
+  "list": ["Alice", "Bob", "Carol"]
 }
 ```
 
-### レスポンス例
+Or
+
+```bash
+POST /
+Content-Type: application/json
+
+{
+  "list": "Alice,Bob,Carol"
+}
+```
+
+### Success Response Example
 
 ```json
 {
-  "winner": "山田",
-  "candidates": ["山田", "大田", "伊藤"],
-  "count": 3
+  "winner": "Alice",
+  "candidates": ["Alice", "Bob", "Carol"]
 }
 ```
 
+### Error Response Example
+
+When no candidates are specified:
+
+```json
+{
+  "error": "BadRequest",
+  "message": "Please specify candidates in the list parameter. Example: ?list=Alice,Bob,Carol"
+}
+```
+
+> **Note**: The actual error message in the implementation is currently in Japanese. The example above shows what the message would be in English.
+
 ---
 
-## 🛠️ 技術スタック
+## Tech Stack
 
-- **ランタイム**: Python 3.12 (AWS Lambda 公式イメージ)
-- **インフラ**: AWS Lambda + Lambda Function URL
-- **デプロイツール**: Serverless Framework v4
-- **開発環境**: Docker (`public.ecr.aws/lambda/python:3.12`) + docker-compose
+- **Runtime**: Python 3.12 (AWS Lambda official image)
+- **Infrastructure**: AWS Lambda + Lambda Function URL
+- **Deployment Tool**: Serverless Framework v4
+- **Development Environment**: Docker (`public.ecr.aws/lambda/python:3.12`) + docker compose
 
 ---
 
-## ⚡ クイックスタート
+## ⚡ Quick Start
 
-最速で動作確認する手順：
+Steps to get up and running quickly:
 
 ```bash
-# 1. リポジトリのクローン（または移動）
+# 1. Clone the repository (or navigate to it)
 cd /path/to/random-assign-python-lambda
 
-# 2. .env ファイルはすでに作成済み（ライセンスキー設定済み）
+# 2. .env file is already created (with license key configured)
 
-# 3. Docker コンテナを起動
-docker-compose up -d
+# 3. Install dependencies
+docker compose run --rm app npm install
 
-# 4. コンテナに入る
-docker-compose exec app bash
+# 4. Start local server
+docker compose run --rm --service-ports app npm run local
 
-# 5. 依存関係をインストール
-npm install
-
-# 6. ローカルサーバーを起動
-npm run local
-
-# 7. 別のターミナルでテスト
-curl "http://localhost:3000/?list=山田,大田,伊藤"
+# 5. Test from another terminal
+curl "http://localhost:3000/?list=Alice,Bob,Carol"
 ```
 
 ---
 
-## 📦 セットアップ
+## 📦 Setup
 
-### 1. 環境変数ファイルの確認
-
-`.env` ファイルは既に作成済みで、Serverless Framework のライセンスキーが設定されています。
-
-AWS へデプロイする場合は、`.env` ファイルを編集して AWS 認証情報を設定してください：
+### 1. Environment Variables Configuration
 
 ```bash
-# AWS 認証情報（デプロイ時に必要）
+# Serverless Framework access key
+SERVERLESS_ACCESS_KEY=your-serverless-access-key
+
+# AWS credentials (required for deployment)
 AWS_ACCESS_KEY_ID=your-aws-access-key-id
 AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
 AWS_REGION=ap-northeast-1
 ```
 
-新規セットアップの場合は、テンプレートからコピーできます：
+For new setup, you can copy from the template:
 
 ```bash
 cp env.template .env
 ```
 
-### 2. Docker コンテナの起動
+### 2. Install Dependencies
 
 ```bash
-docker-compose up -d
-```
-
-### 3. コンテナに入る
-
-```bash
-docker-compose exec app bash
-```
-
-### 4. 依存関係のインストール
-
-```bash
-npm install
+docker compose run --rm app npm install
 ```
 
 ---
 
-## 🚀 ローカル開発
+## Local Development
 
-### ローカルサーバーの起動
+### Start Local Server
 
-コンテナ内で以下のコマンドを実行：
+Run the following command:
 
 ```bash
-npm run local
+docker compose run --rm --service-ports app npm run local
 ```
 
-サーバーが起動したら、ブラウザまたは curl でアクセスできます：
+Once the server is running, you can access it via browser or curl:
 
 ```bash
-# ブラウザで開く
-open http://localhost:3000/?list=山田,大田,伊藤
+# Open in browser
+open http://localhost:3000/?list=Alice,Bob,Carol
 
-# curl でテスト (GET)
-curl "http://localhost:3000/?list=山田,大田,伊藤"
+# Test with curl (GET)
+curl "http://localhost:3000/?list=Alice,Bob,Carol"
 
-# curl でテスト (POST)
+# Test with curl (POST)
 curl -X POST http://localhost:3000/ \
   -H "Content-Type: application/json" \
-  -d '{"list": ["山田", "大田", "伊藤"]}'
+  -d '{"list": ["Alice", "Bob", "Carol"]}'
 ```
 
-### テストスクリプトの利用
+### Using Test Scripts
 
-#### 1. Lambda 関数の直接テスト（サーバー不要）
+#### 1. Direct Lambda Function Test (No Server Required)
 
 ```bash
-./test-local.sh
+docker compose run --rm app npm run test
 ```
 
-このスクリプトは、サーバーを立ち上げずに Lambda 関数を直接実行し、複数のテストケースを実行します。
+This script directly executes the Lambda function without starting a server and runs multiple test cases.
 
-#### 2. API エンドポイントのテスト
+#### 2. API Endpoint Test
 
 ```bash
-# ローカルサーバーのテスト
+# Test local server (from host machine)
 ./test-api.sh
 
-# デプロイ済み AWS Lambda のテスト
+# Test deployed AWS Lambda
 ./test-api.sh https://your-lambda-url.lambda-url.ap-northeast-1.on.aws
 ```
 
-このスクリプトは、実際の HTTP リクエストを送信して API をテストします。
+This script tests the API by sending actual HTTP requests.
 
-### ローカル invoke テスト（個別実行）
+### Local Invoke Test (Individual Execution)
 
-サーバーを立ち上げずに直接 Lambda 関数を実行してテストできます：
-
-```bash
-npm run invoke-local
-```
-
-または直接 serverless コマンドを使用：
+You can test by directly executing the Lambda function without starting a server:
 
 ```bash
-serverless invoke local -f randomAssign --data '{"queryStringParameters":{"list":"山田,大田,伊藤"}}'
+docker compose run --rm app npm run invoke-local
 ```
 
 ---
 
-## 🌐 AWS へのデプロイ
+## 🌐 Deploy to AWS
 
-### 1. デプロイ実行
+### 1. Execute Deployment
 
-コンテナ内で以下のコマンドを実行：
-
-```bash
-npm run deploy
-```
-
-または
+Run the following command:
 
 ```bash
-serverless deploy
+docker compose run --rm app npm run deploy
 ```
 
-デプロイが完了すると、Lambda Function URL が表示されます：
+When deployment completes, the Lambda Function URL will be displayed:
 
 ```
-✔ Service deployed to stack random-assign-api-dev (123s)
+✔ Service deployed to stack random-assigner-dev (123s)
 
 functions:
-  randomAssign: random-assign-api-dev-randomAssign
+  randomAssign: random-assigner-dev-randomAssign
     url: https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/
 ```
 
-### 2. デプロイされた API のテスト
+### 2. Test Deployed API
 
 ```bash
-# GET リクエスト
-curl "https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/?list=山田,大田,伊藤"
+# GET request
+curl "https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/?list=Alice,Bob,Carol"
 
-# POST リクエスト
+# POST request
 curl -X POST https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/ \
   -H "Content-Type: application/json" \
-  -d '{"list": ["山田", "大田", "伊藤"]}'
+  -d '{"list": ["Alice", "Bob", "Carol"]}'
 ```
 
-### 3. ログの確認
+### 3. View Logs
 
 ```bash
-npm run logs
+docker compose run --rm app npm run logs
 ```
 
-または
+### 4. Check Deployment Info
 
 ```bash
-serverless logs -f randomAssign --tail
+docker compose run --rm app npm run info
 ```
 
-### 4. デプロイ情報の確認
+### 5. Remove Resources
 
 ```bash
-npm run info
-```
-
-### 5. リソースの削除
-
-```bash
-npm run remove
+docker compose run --rm app npm run remove
 ```
 
 ---
 
-## 📋 利用可能なコマンド
+## 📋 Available Commands
 
-| コマンド | 説明 |
+| Command | Description |
 |---------|------|
-| `npm run local` | ローカルサーバーを起動 (localhost:3000) |
-| `npm run invoke-local` | Lambda 関数をローカルで直接実行 |
-| `npm run deploy` | AWS にデプロイ |
-| `npm run remove` | AWS からリソースを削除 |
-| `npm run info` | デプロイ情報を表示 |
-| `npm run logs` | CloudWatch ログを表示 |
+| `docker compose run --rm --service-ports app npm run local` | Start local server (localhost:3000) |
+| `docker compose run --rm app npm run invoke-local` | Execute Lambda function locally |
+| `docker compose run --rm app npm run deploy` | Deploy to AWS |
+| `docker compose run --rm app npm run remove` | Remove resources from AWS |
+| `docker compose run --rm app npm run info` | Display deployment information |
+| `docker compose run --rm app npm run logs` | Display CloudWatch logs |
+
+> **Note**: The `--service-ports` flag is required for `npm run local` to expose port 3000 to the host machine.
 
 ---
 
-## 🐛 トラブルシューティング
+## 🐛 Troubleshooting
 
-### ライセンスキーエラー
+### License Key Error
 
 ```
 Error: License key not found
 ```
 
-`.env` ファイルに `SERVERLESS_ACCESS_KEY` が正しく設定されているか確認してください。
+Check that `SERVERLESS_ACCESS_KEY` is correctly configured in the `.env` file.
 
-### AWS 認証エラー
+### AWS Authentication Error
 
 ```
 Error: AWS credentials not found
 ```
 
-`.env` ファイルに AWS の認証情報が正しく設定されているか確認してください。
+Check that AWS credentials are correctly configured in the `.env` file.
 
-### ポートが使用中
+### Port Already in Use
 
 ```
 Error: Port 3000 is already in use
 ```
 
-他のプロセスが 3000 番ポートを使用している場合は、`serverless.yml` の `httpPort` を変更してください。
+If another process is using port 3000, change the `httpPort` in `serverless.yml`.
 
 ---
 
-## 📂 プロジェクト構成
+## 📂 Project Structure
 
 ```
 .
-├── handler.py              # Lambda 関数のハンドラー
-├── serverless.yml          # Serverless Framework 設定
-├── package.json            # Node.js 依存関係
-├── Dockerfile              # Docker イメージ定義
-├── docker-compose.yml      # Docker Compose 設定
-├── env.template            # 環境変数テンプレート
-├── .env                    # 環境変数（自動生成、Git除外）
-├── test-local.sh           # Lambda 関数の直接テストスクリプト
-├── test-api.sh             # API エンドポイントのテストスクリプト
-└── README.md               # このファイル
+├── handler.py              # Lambda function handler
+├── serverless.yml          # Serverless Framework config (local development)
+├── serverless.deploy.yml   # Serverless Framework config (AWS deployment)
+├── package.json            # Node.js dependencies
+├── Dockerfile              # Docker image definition
+├── docker compose.yml      # Docker Compose configuration
+├── env.template            # Environment variables template
+├── .env                    # Environment variables (auto-generated, Git ignored)
+├── test-local.sh           # Lambda function direct test script
+├── test-api.sh             # API endpoint test script
+└── README.md               # This file
 ```
 
 ---
 
-## 🔒 セキュリティノート
+## 🔒 Security Notes
 
-- `.env` ファイルは絶対に Git にコミットしないでください
-- 本番環境では適切な認証・認可の仕組みを追加することを推奨します
-- Lambda Function URL は公開 URL なので、機密情報を含まないようにしてください
+- **Never** commit the `.env` file to Git
+- It is recommended to add proper authentication and authorization mechanisms for production environments
+- Lambda Function URL is a public URL, so do not include sensitive information
 
 ---
 
-## 📝 ライセンス
+## 📝 License
 
 MIT
 
