@@ -36,11 +36,11 @@ else:
 
 # Test 1: GET request (query parameters)
 echo "📝 Test 1: GET request (query parameters)"
-RESPONSE1=$(npx serverless invoke local -f randomAssign --data '{
+RESPONSE1=$(sam local invoke RandomAssignFunction --event <(echo '{
   "queryStringParameters": {
     "list": "山田,大田,伊藤"
   }
-}' 2>&1)
+}') 2>&1)
 
 echo "$RESPONSE1"
 WINNER1=$(extract_winner_from_html "$RESPONSE1")
@@ -59,9 +59,9 @@ echo ""
 
 # Test 2: POST request (JSON array)
 echo "📝 Test 2: POST request (JSON array)"
-RESPONSE2=$(npx serverless invoke local -f randomAssign --data '{
+RESPONSE2=$(sam local invoke RandomAssignFunction --event <(echo '{
   "body": "{\"list\": [\"鈴木\", \"佐藤\", \"田中\", \"高橋\"]}"
-}' 2>&1)
+}') 2>&1)
 
 echo "$RESPONSE2"
 WINNER2=$(extract_winner_from_html "$RESPONSE2")
@@ -80,9 +80,9 @@ echo ""
 
 # Test 3: POST request (comma-separated string)
 echo "📝 Test 3: POST request (comma-separated string)"
-RESPONSE3=$(npx serverless invoke local -f randomAssign --data '{
+RESPONSE3=$(sam local invoke RandomAssignFunction --event <(echo '{
   "body": "{\"list\": \"Alice,Bob,Charlie,Diana\"}"
-}' 2>&1)
+}') 2>&1)
 
 echo "$RESPONSE3"
 WINNER3=$(extract_winner_from_html "$RESPONSE3")
@@ -101,7 +101,7 @@ echo ""
 
 # Test 4: Error case (empty list)
 echo "📝 Test 4: Error case (empty list)"
-RESPONSE4=$(npx serverless invoke local -f randomAssign --data '{}' 2>&1)
+RESPONSE4=$(sam local invoke RandomAssignFunction --event <(echo '{}') 2>&1)
 
 echo "$RESPONSE4"
 

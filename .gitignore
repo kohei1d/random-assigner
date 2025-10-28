@@ -2,6 +2,10 @@
 .serverless/
 .serverless_plugins/
 
+# AWS SAM
+.aws-sam/
+samconfig.toml
+
 # AWS credentials
 .env
 .env.local

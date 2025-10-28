@@ -1,6 +1,6 @@
 # Random Assignner
 
-A random assignment API built with AWS Lambda + Serverless Framework v4.  
+A random assignment API built with AWS Lambda + AWS SAM.  
 Local development, testing, and deployment all work seamlessly within a Docker environment.
 
 ## Demo
@@ -68,7 +68,7 @@ When no candidates are specified:
 
 - **Runtime**: Python 3.12 (AWS Lambda official image)
 - **Infrastructure**: AWS Lambda + Lambda Function URL
-- **Deployment Tool**: Serverless Framework v4
+- **Deployment Tool**: AWS SAM (Serverless Application Model)
 - **Development Environment**: Docker (`public.ecr.aws/lambda/python:3.12`) + docker compose
 
 ---
@@ -100,13 +100,13 @@ curl "http://localhost:3000/?list=Alice,Bob,Carol"
 ### 1. Environment Variables Configuration
 
 ```bash
-# Serverless Framework access key
-SERVERLESS_ACCESS_KEY=your-serverless-access-key
-
 # AWS credentials (required for deployment)
 AWS_ACCESS_KEY_ID=your-aws-access-key-id
 AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
 AWS_REGION=ap-northeast-1
+
+# Optional: SAM deployment parameters
+SAM_STACK_NAME=random-assigner
 ```
 
 For new setup, you can copy from the template:
@@ -184,20 +184,43 @@ docker compose run --rm app npm run invoke-local
 
 ### 1. Execute Deployment
 
-Run the following command:
+First, build the application:
+
+```bash
+docker compose run --rm app npm run build
+```
+
+Then deploy (first time deployment requires guided mode):
 
 ```bash
 docker compose run --rm app npm run deploy
 ```
 
+Follow the prompts to configure:
+- Stack Name (default: random-assigner)
+- AWS Region (e.g., ap-northeast-1)
+- Confirm changes before deploy
+- Allow SAM CLI IAM role creation
+- RandomAssignFunction has no authorization defined, Is this okay? [y/N]: y
+- Save arguments to configuration file
+
+For subsequent deployments, you can use:
+
+```bash
+docker compose run --rm app npm run deploy-no-confirm
+```
+
 When deployment completes, the Lambda Function URL will be displayed:
 
 ```
-✔ Service deployed to stack random-assigner-dev (123s)
-
-functions:
-  randomAssign: random-assigner-dev-randomAssign
-    url: https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/
+CloudFormation outputs from deployed stack
+--------------------------------------------------------------------------------
+Outputs                                                                                                                                                                               
+--------------------------------------------------------------------------------
+Key                 RandomAssignFunctionUrl                                                                                                                                           
+Description         Lambda Function URL for Random Assigner                                                                                                                           
+Value               https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/                                                                                                              
+--------------------------------------------------------------------------------
 ```
 
 ### 2. Test Deployed API
@@ -218,16 +241,16 @@ curl -X POST https://xxxxxxxxxx.lambda-url.ap-northeast-1.on.aws/ \
 docker compose run --rm app npm run logs
 ```
 
-### 4. Check Deployment Info
+### 4. Validate Template
 
 ```bash
-docker compose run --rm app npm run info
+docker compose run --rm app npm run validate
 ```
 
 ### 5. Remove Resources
 
 ```bash
-docker compose run --rm app npm run remove
+docker compose run --rm app npm run delete
 ```
 
 ---
@@ -238,9 +261,11 @@ docker compose run --rm app npm run remove
 |---------|------|
 | `docker compose run --rm --service-ports app npm run local` | Start local server (localhost:3000) |
 | `docker compose run --rm app npm run invoke-local` | Execute Lambda function locally |
-| `docker compose run --rm app npm run deploy` | Deploy to AWS |
-| `docker compose run --rm app npm run remove` | Remove resources from AWS |
-| `docker compose run --rm app npm run info` | Display deployment information |
+| `docker compose run --rm app npm run build` | Build SAM application |
+| `docker compose run --rm app npm run deploy` | Deploy to AWS (guided mode) |
+| `docker compose run --rm app npm run deploy-no-confirm` | Deploy to AWS (using saved config) |
+| `docker compose run --rm app npm run validate` | Validate SAM template |
+| `docker compose run --rm app npm run delete` | Remove resources from AWS |
 | `docker compose run --rm app npm run logs` | Display CloudWatch logs |
 
 > **Note**: The `--service-ports` flag is required for `npm run local` to expose port 3000 to the host machine.
@@ -248,14 +273,6 @@ docker compose run --rm app npm run remove
 ---
 
 ## Troubleshooting
-
-### License Key Error
-
-```
-Error: License key not found
-```
-
-Check that `SERVERLESS_ACCESS_KEY` is correctly configured in the `.env` file.
 
 ### AWS Authentication Error
 
@@ -271,7 +288,7 @@ Check that AWS credentials are correctly configured in the `.env` file.
 Error: Port 3000 is already in use
 ```
 
-If another process is using port 3000, change the `httpPort` in `serverless.yml`.
+If another process is using port 3000, you can change the port in the `npm run local` command or kill the process using that port.
 
 ---
 
@@ -280,11 +297,14 @@ If another process is using port 3000, change the `httpPort` in `serverless.yml`
 ```
 .
 ├── handler.py              # Lambda function handler
-├── serverless.yml          # Serverless Framework config (local development)
-├── serverless.deploy.yml   # Serverless Framework config (AWS deployment)
-├── package.json            # Node.js dependencies
+├── template.yaml           # AWS SAM template
+├── events/                 # Test event files for local invoke
+│   └── test-event.json     # Sample test event
+├── templates/              # HTML templates
+│   └── winner.html         # Winner display HTML
+├── package.json            # Node.js dependencies and scripts
 ├── Dockerfile              # Docker image definition
-├── docker compose.yml      # Docker Compose configuration
+├── docker-compose.yml      # Docker Compose configuration
 ├── env.template            # Environment variables template
 ├── .env                    # Environment variables (auto-generated, Git ignored)
 ├── test-local.sh           # Lambda function direct test script
