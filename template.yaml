@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Random Assigner - Serverless Application using AWS SAM
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+    Runtime: python3.12
+    Architectures:
+      - x86_64
+
+Resources:
+  RandomAssignFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: handler.lambda_handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins:
+            - "*"
+          AllowMethods:
+            - GET
+            - POST
+          AllowHeaders:
+            - Content-Type
+
+Outputs:
+  RandomAssignFunctionUrl:
+    Description: "Lambda Function URL for Random Assigner"
+    Value: !GetAtt RandomAssignFunctionUrl.FunctionUrl
+  RandomAssignFunction:
+    Description: "Random Assign Lambda Function ARN"
+    Value: !GetAtt RandomAssignFunction.Arn
+  RandomAssignFunctionIamRole:
+    Description: "Implicit IAM Role created for Random Assign function"
+    Value: !GetAtt RandomAssignFunctionRole.Arn
