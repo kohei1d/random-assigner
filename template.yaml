@@ -16,6 +16,12 @@ Resources:
     Properties:
       CodeUri: .
       Handler: handler.lambda_handler
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
       FunctionUrlConfig:
         AuthType: NONE
         Cors:
@@ -31,6 +37,9 @@ Outputs:
   RandomAssignFunctionUrl:
     Description: "Lambda Function URL for Random Assigner"
     Value: !GetAtt RandomAssignFunctionUrl.FunctionUrl
+  RandomAssignApi:
+    Description: "API Gateway endpoint URL for Random Assigner"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
   RandomAssignFunction:
     Description: "Random Assign Lambda Function ARN"
     Value: !GetAtt RandomAssignFunction.Arn
