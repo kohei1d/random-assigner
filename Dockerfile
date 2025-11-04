@@ -6,7 +6,10 @@ RUN curl -fsSL https://rpm.nodesource.com/setup_20.x | bash - && \
     dnf clean all && \
     rm -rf /var/cache/dnf
 
-RUN node --version && npm --version && python --version
+# Install AWS SAM CLI
+RUN pip3 install aws-sam-cli
+
+RUN node --version && npm --version && python --version && sam --version
 
 WORKDIR /app
 
